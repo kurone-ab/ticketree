@@ -27,6 +27,8 @@
 - **Module System**: ESM (`"type": "module"`)
 - **CLI Framework**: Commander.js
 - **External APIs**: Jira (jira.js), GitHub (octokit)
+- **Git Operations**: simple-git
+- **Interactive Prompts**: @inquirer/prompts
 
 ---
 
@@ -150,8 +152,10 @@ src/
   index.ts           # Library exports
   adapters/          # External service integrations
     jira.ts          # Jira API adapter
+    github.ts        # GitHub PR creation adapter
   cli/
     index.ts         # CLI entry point (Commander setup)
+    error-handler.ts # Global error handling & process signals
     commands/        # CLI command implementations
       init.ts
       start.ts
@@ -159,6 +163,14 @@ src/
       end.ts
   config/
     types.ts         # Type definitions & default config
+    loader.ts        # cosmiconfig-based config loader
+  core/              # Core business logic
+    editor.ts        # Editor launch utility
+    terminal.ts      # Terminal preset support (ghostty, etc.)
+    ticket-parser.ts # Ticket input parsing & interactive selection
+    worktree.ts      # Git worktree management
+  utils/
+    errors.ts        # Custom error classes (UserError)
 ```
 
 ### Patterns
@@ -167,6 +179,7 @@ src/
 2. **CLI Commands**: Each command is a separate file exporting a single function.
 3. **Config Loading**: Uses `cosmiconfig` for `.ticketreerc` (YAML format).
 4. **Environment Variables**: Credentials via env vars (JIRA_BASE_URL, JIRA_EMAIL, etc.)
+5. **Error Handling**: Custom `UserError` class with optional hints. Factory functions for common errors in `utils/errors.ts`.
 
 ---
 
@@ -201,6 +214,9 @@ export JIRA_API_TOKEN="your-api-token"
 
 # Optional for PR creation
 export GITHUB_TOKEN="ghp_xxx"
+
+# Optional for debugging
+export DEBUG="1"  # Shows full stack traces on errors
 ```
 
 Recommend using `direnv` with `.envrc` file.
