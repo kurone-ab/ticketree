@@ -134,20 +134,21 @@ export const createSymlinks = (options: CreateSymlinksOptions): void => {
   const { worktreePath, symlinks } = options;
 
   for (const symlink of symlinks) {
-    const sourcePath = resolve(process.cwd(), symlink.source);
-    const targetPath = resolve(worktreePath, symlink.target);
+    const config = typeof symlink === 'string' ? { source: symlink, target: symlink } : symlink;
+    const sourcePath = resolve(process.cwd(), config.source);
+    const targetPath = resolve(worktreePath, config.target);
 
     if (!existsSync(sourcePath)) {
-      console.log(chalk.yellow(`Symlink source does not exist, skipping: ${symlink.source}`));
+      console.log(chalk.yellow(`Symlink source does not exist, skipping: ${config.source}`));
       continue;
     }
 
     if (existsSync(targetPath)) {
-      console.log(chalk.gray(`Symlink already exists, skipping: ${symlink.target}`));
+      console.log(chalk.gray(`Symlink already exists, skipping: ${config.target}`));
       continue;
     }
 
     symlinkSync(sourcePath, targetPath);
-    console.log(chalk.green(`Created symlink: ${symlink.target} -> ${symlink.source}`));
+    console.log(chalk.green(`Created symlink: ${config.target} -> ${config.source}`));
   }
 };

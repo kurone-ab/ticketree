@@ -1,6 +1,6 @@
 {
   "name": "ticketree",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "CLI tool that connects issue tracker tickets with Git Worktree for automated ticket-based development workflow",
   "type": "module",
   "bin": {

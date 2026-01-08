@@ -18,10 +18,12 @@ export interface GitConfig {
   github?: GitHubConfig;
 }
 
-export interface SymlinkConfig {
+export interface ExplicitSymlinkConfig {
   source: string;
   target: string;
 }
+
+export type SymlinkConfig = ExplicitSymlinkConfig | string;
 
 export interface PostCreateConfig {
   symlinks: SymlinkConfig[];
