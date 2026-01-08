@@ -5,6 +5,19 @@ import { initCommand } from './commands/init.js';
 import { startCommand } from './commands/start.js';
 import { listCommand } from './commands/list.js';
 import { endCommand } from './commands/end.js';
+import { handleError, setupGlobalHandlers } from './error-handler.js';
+
+setupGlobalHandlers();
+
+const withErrorHandler =
+  <T extends unknown[]>(fn: (...args: T) => Promise<void>) =>
+  async (...args: T) => {
+    try {
+      await fn(...args);
+    } catch (error) {
+      handleError(error);
+    }
+  };
 
 const program = new Command();
 
@@ -13,14 +26,17 @@ program
   .description('CLI tool that connects issue tracker tickets with Git Worktree')
   .version('0.1.0');
 
-program.command('init').description('Initialize Ticketree in current project').action(initCommand);
+program.command('init').description('Initialize Ticketree in current project').action(withErrorHandler(initCommand));
 
 program
   .command('start [ticket]')
   .description('Start working on a ticket (create worktree, open editor/terminal)')
-  .action(startCommand);
+  .action(withErrorHandler(startCommand));
 
-program.command('list').description('List current worktrees with ticket information').action(listCommand);
+program
+  .command('list')
+  .description('List current worktrees with ticket information')
+  .action(withErrorHandler(listCommand));
 
 program
   .command('end [ticket]')
@@ -29,6 +45,6 @@ program
   .option('--no-draft', 'Create PR as ready for review (not draft)')
   .option('--base <branch>', 'Base branch for PR')
   .option('--keep', 'Keep worktree and branch after ending')
-  .action(endCommand);
+  .action(withErrorHandler(endCommand));
 
 program.parse();

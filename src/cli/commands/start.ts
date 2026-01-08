@@ -5,13 +5,14 @@ import { openEditor } from '../../core/editor.js';
 import { openTerminal } from '../../core/terminal.js';
 import { parseTicketInput, selectTicketInteractively } from '../../core/ticket-parser.js';
 import { createWorktree, getWorktreePath, worktreeExists } from '../../core/worktree.js';
+import { jiraConfigMissingError } from '../../utils/errors.js';
 
 export const startCommand = async (ticketInput?: string): Promise<void> => {
   const config = await loadConfig();
   const jiraConfig = config.issueTracker.jira;
 
   if (!jiraConfig) {
-    throw new Error('Jira configuration is missing in .ticketreerc');
+    throw jiraConfigMissingError();
   }
 
   let ticket: JiraIssue;
@@ -59,5 +60,5 @@ export const startCommand = async (ticketInput?: string): Promise<void> => {
     openTerminal({ worktreePath, title: ticket.key, preset: config.terminal.preset });
   }
 
-  console.log(chalk.green('\nDone! Happy coding 🚀'));
+  console.log(chalk.green('\nDone! Happy coding'));
 };

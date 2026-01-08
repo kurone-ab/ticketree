@@ -4,6 +4,7 @@ import chalk from 'chalk';
 import { stringify } from 'yaml';
 import { DEFAULT_CONFIG } from '../../config/types.js';
 import { testJiraConnection } from '../../adapters/jira.js';
+import { jiraConnectionFailedError } from '../../utils/errors.js';
 
 const TICKETREE_DIR = '.ticketree';
 const CONFIG_FILE = '.ticketreerc';
@@ -56,23 +57,8 @@ export const initCommand = async (): Promise<void> => {
     await testJiraConnection();
     console.log(chalk.green('Jira connection successful!'));
   } catch (error) {
-    if (error instanceof Error) {
-      console.log(chalk.red(`Jira connection failed: ${error.message}`));
-    }
-    console.log(chalk.yellow('\nPlease set up your Jira credentials using direnv:'));
-    console.log(
-      chalk.gray(`
-# .envrc
-export JIRA_BASE_URL="https://your-company.atlassian.net"
-export JIRA_EMAIL="your-email@example.com"
-export JIRA_API_TOKEN="your-api-token"
-
-# For PR creation (optional)
-export GITHUB_TOKEN="ghp_xxx"
-`),
-    );
-    console.log(chalk.gray('Then run: direnv allow'));
-    process.exit(1);
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    throw jiraConnectionFailedError(message);
   }
 
   console.log(chalk.green('\nTicketree initialized successfully!'));

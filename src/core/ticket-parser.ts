@@ -1,5 +1,6 @@
 import { search } from '@inquirer/prompts';
 import type { JiraIssue } from '../adapters/jira.js';
+import { invalidTicketFormatError, noIssuesFoundError } from '../utils/errors.js';
 
 export interface ParsedTicket {
   key: string;
@@ -42,12 +43,12 @@ export const parseTicketInput = (input: string, defaultProject: string): ParsedT
     };
   }
 
-  throw new Error(`Invalid ticket format: "${input}". Expected: PROJ-123, 123, or Jira URL`);
+  throw invalidTicketFormatError(input);
 };
 
 export const selectTicketInteractively = async (issues: JiraIssue[]): Promise<JiraIssue> => {
   if (issues.length === 0) {
-    throw new Error('No issues found matching the configured JQL query');
+    throw noIssuesFoundError();
   }
 
   const selected = await search<JiraIssue>({

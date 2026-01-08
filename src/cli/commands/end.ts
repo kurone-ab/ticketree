@@ -13,6 +13,13 @@ import {
   pushBranch,
   worktreeExists,
 } from '../../core/worktree.js';
+import {
+  branchNameNotFoundError,
+  jiraBaseUrlMissingError,
+  jiraConfigMissingError,
+  noWorktreesFoundError,
+  worktreeNotFoundError,
+} from '../../utils/errors.js';
 
 interface EndOptions {
   pr?: boolean;
@@ -46,7 +53,7 @@ const resolveTicketKey = async (ticketInput?: string): Promise<string> => {
 
   const worktrees = await listWorktrees();
   if (worktrees.length === 0) {
-    throw new Error('No worktrees found. Nothing to end.');
+    throw noWorktreesFoundError();
   }
 
   const issues = await Promise.all(
@@ -68,21 +75,21 @@ export const endCommand = async (ticketInput: string | undefined, options: EndOp
   const jiraConfig = config.issueTracker.jira;
 
   if (!jiraConfig) {
-    throw new Error('Jira configuration is missing in .ticketreerc');
+    throw jiraConfigMissingError();
   }
 
   const ticketKey = await resolveTicketKey(ticketInput);
   console.log(chalk.blue(`Ending work on ${ticketKey}...`));
 
   if (!worktreeExists(ticketKey)) {
-    throw new Error(`Worktree for ${ticketKey} does not exist`);
+    throw worktreeNotFoundError(ticketKey);
   }
 
   const issue = await fetchIssue(ticketKey);
   const branchName = await getWorktreeBranch(ticketKey);
 
   if (!branchName) {
-    throw new Error(`Could not determine branch name for ${ticketKey}`);
+    throw branchNameNotFoundError(ticketKey);
   }
 
   console.log(chalk.blue(`Pushing branch ${branchName}...`));
@@ -94,7 +101,7 @@ export const endCommand = async (ticketInput: string | undefined, options: EndOp
 
     const jiraBaseUrl = process.env.JIRA_BASE_URL;
     if (!jiraBaseUrl) {
-      throw new Error('JIRA_BASE_URL environment variable is not set');
+      throw jiraBaseUrlMissingError();
     }
 
     const prBodyTemplate = config.git.github?.prBodyTemplate ?? DEFAULT_PR_BODY_TEMPLATE;
