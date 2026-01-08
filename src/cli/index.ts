@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
+import pkg from '../../package.json' with { type: 'json' };
 import { initCommand } from '@/cli/commands/init.js';
 import { startCommand } from '@/cli/commands/start.js';
 import { listCommand } from '@/cli/commands/list.js';
@@ -24,7 +25,7 @@ const program = new Command();
 program
   .name('ticketree')
   .description('CLI tool that connects issue tracker tickets with Git Worktree')
-  .version('0.1.0');
+  .version(pkg.version);
 
 program.command('init').description('Initialize Ticketree in current project').action(withErrorHandler(initCommand));
 

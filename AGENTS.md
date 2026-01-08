@@ -21,7 +21,7 @@
 
 ## Tech Stack
 
-- **Runtime**: Node.js >= 18.0.0
+- **Runtime**: Node.js >= 20.10.0
 - **Package Manager**: pnpm 10.26.0
 - **Language**: TypeScript 5.9 (ES2022, NodeNext modules)
 - **Module System**: ESM (`"type": "module"`)
