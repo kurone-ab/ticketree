@@ -1,11 +1,11 @@
 import chalk from 'chalk';
-import { fetchIssue, fetchIssues, transitionIssue, type JiraIssue } from '../../adapters/jira.js';
-import { loadConfig } from '../../config/loader.js';
-import { openEditor } from '../../core/editor.js';
-import { openTerminal } from '../../core/terminal.js';
-import { parseTicketInput, selectTicketInteractively } from '../../core/ticket-parser.js';
-import { createWorktree, getWorktreePath, worktreeExists } from '../../core/worktree.js';
-import { jiraConfigMissingError } from '../../utils/errors.js';
+import { fetchIssue, fetchIssues, transitionIssue, type JiraIssue } from '@/adapters/jira.js';
+import { loadConfig } from '@/config/loader.js';
+import { openEditor } from '@/core/editor.js';
+import { openTerminal } from '@/core/terminal.js';
+import { parseTicketInput, selectTicketInteractively } from '@/core/ticket-parser.js';
+import { createWorktree, getWorktreePath, worktreeExists } from '@/core/worktree.js';
+import { jiraConfigMissingError } from '@/utils/errors.js';
 
 export const startCommand = async (ticketInput?: string): Promise<void> => {
   const config = await loadConfig();

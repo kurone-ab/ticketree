@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { UserError } from '../utils/errors.js';
+import { UserError } from '@/utils/errors.js';
 
 const isDebugMode = () => process.env.DEBUG === '1';
 

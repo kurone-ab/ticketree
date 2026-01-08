@@ -1,8 +1,8 @@
 import chalk from 'chalk';
-import { createPullRequest, getRepoFromRemote } from '../../adapters/github.js';
-import { fetchIssue, transitionIssue, type JiraIssue } from '../../adapters/jira.js';
-import { loadConfig } from '../../config/loader.js';
-import { selectTicketInteractively } from '../../core/ticket-parser.js';
+import { createPullRequest, getRepoFromRemote } from '@/adapters/github.js';
+import { fetchIssue, transitionIssue, type JiraIssue } from '@/adapters/jira.js';
+import { loadConfig } from '@/config/loader.js';
+import { selectTicketInteractively } from '@/core/ticket-parser.js';
 import {
   deleteBranch,
   deleteWorktree,
@@ -12,14 +12,14 @@ import {
   listWorktrees,
   pushBranch,
   worktreeExists,
-} from '../../core/worktree.js';
+} from '@/core/worktree.js';
 import {
   branchNameNotFoundError,
   jiraBaseUrlMissingError,
   jiraConfigMissingError,
   noWorktreesFoundError,
   worktreeNotFoundError,
-} from '../../utils/errors.js';
+} from '@/utils/errors.js';
 
 interface EndOptions {
   pr?: boolean;

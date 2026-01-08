@@ -1,5 +1,5 @@
 import { Version3Client } from 'jira.js';
-import type { JiraCredentials } from '../config/types.js';
+import type { JiraCredentials } from '@/config/types.js';
 
 const getCredentialsFromEnv = (): JiraCredentials => {
   const baseUrl = process.env.JIRA_BASE_URL;
@@ -19,7 +19,8 @@ const getCredentialsFromEnv = (): JiraCredentials => {
   return { baseUrl, email, apiToken };
 };
 
-const createClient = (credentials: JiraCredentials): Version3Client => new Version3Client({
+const createClient = (credentials: JiraCredentials): Version3Client =>
+  new Version3Client({
     host: credentials.baseUrl,
     authentication: {
       basic: {
@@ -72,7 +73,11 @@ export const fetchIssue = async (issueKey: string, credentials?: JiraCredentials
   };
 };
 
-export const transitionIssue = async (issueKey: string, transitionName: string, credentials?: JiraCredentials): Promise<void> => {
+export const transitionIssue = async (
+  issueKey: string,
+  transitionName: string,
+  credentials?: JiraCredentials,
+): Promise<void> => {
   const client = createClient(credentials ?? getCredentialsFromEnv());
 
   const transitions = await client.issues.getTransitions({

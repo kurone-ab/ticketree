@@ -1,6 +1,6 @@
 import chalk from 'chalk';
-import { fetchIssues, type JiraIssue } from '../../adapters/jira.js';
-import { listWorktrees } from '../../core/worktree.js';
+import { fetchIssues, type JiraIssue } from '@/adapters/jira.js';
+import { listWorktrees } from '@/core/worktree.js';
 
 export const listCommand = async (): Promise<void> => {
   const worktrees = await listWorktrees();

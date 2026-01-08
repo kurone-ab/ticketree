@@ -1,6 +1,6 @@
 import { search } from '@inquirer/prompts';
-import type { JiraIssue } from '../adapters/jira.js';
-import { invalidTicketFormatError, noIssuesFoundError } from '../utils/errors.js';
+import type { JiraIssue } from '@/adapters/jira.js';
+import { invalidTicketFormatError, noIssuesFoundError } from '@/utils/errors.js';
 
 export interface ParsedTicket {
   key: string;

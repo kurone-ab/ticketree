@@ -1,6 +1,6 @@
 import { spawn } from 'node:child_process';
 import { resolve } from 'node:path';
-import type { TerminalConfig } from '../config/types.js';
+import type { TerminalConfig } from '@/config/types.js';
 
 type TerminalPreset = TerminalConfig['preset'];
 

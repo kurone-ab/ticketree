@@ -1,5 +1,5 @@
 import { cosmiconfig } from 'cosmiconfig';
-import type { TicketreeConfig } from './types.js';
+import type { TicketreeConfig } from '@/config/types.js';
 
 const explorer = cosmiconfig('ticketree', {
   searchPlaces: ['.ticketreerc', '.ticketreerc.yaml', '.ticketreerc.yml', '.ticketreerc.json'],

@@ -2,9 +2,9 @@ import { existsSync, mkdirSync, appendFileSync, readFileSync, writeFileSync } fr
 import { join } from 'node:path';
 import chalk from 'chalk';
 import { stringify } from 'yaml';
-import { DEFAULT_CONFIG } from '../../config/types.js';
-import { testJiraConnection } from '../../adapters/jira.js';
-import { jiraConnectionFailedError } from '../../utils/errors.js';
+import { DEFAULT_CONFIG } from '@/config/types.js';
+import { testJiraConnection } from '@/adapters/jira.js';
+import { jiraConnectionFailedError } from '@/utils/errors.js';
 
 const TICKETREE_DIR = '.ticketree';
 const CONFIG_FILE = '.ticketreerc';

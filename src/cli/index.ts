@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
-import { initCommand } from './commands/init.js';
-import { startCommand } from './commands/start.js';
-import { listCommand } from './commands/list.js';
-import { endCommand } from './commands/end.js';
-import { handleError, setupGlobalHandlers } from './error-handler.js';
+import { initCommand } from '@/cli/commands/init.js';
+import { startCommand } from '@/cli/commands/start.js';
+import { listCommand } from '@/cli/commands/list.js';
+import { endCommand } from '@/cli/commands/end.js';
+import { handleError, setupGlobalHandlers } from '@/cli/error-handler.js';
 
 setupGlobalHandlers();
 
