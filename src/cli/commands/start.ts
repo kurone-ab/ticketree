@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 
-export function startCommand(ticket?: string): void {
+export const startCommand = (ticket?: string): void => {
   console.log(chalk.blue('Starting ticket work...'));
 
   if (ticket) {
@@ -10,4 +10,4 @@ export function startCommand(ticket?: string): void {
   }
 
   console.log(chalk.yellow('Not implemented yet'));
-}
+};

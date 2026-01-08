@@ -1,7 +1,7 @@
 import { Version3Client } from 'jira.js';
 import type { JiraCredentials } from '../config/types.js';
 
-function getCredentialsFromEnv(): JiraCredentials {
+const getCredentialsFromEnv = (): JiraCredentials => {
   const baseUrl = process.env.JIRA_BASE_URL;
   const email = process.env.JIRA_EMAIL;
   const apiToken = process.env.JIRA_API_TOKEN;
@@ -17,10 +17,9 @@ function getCredentialsFromEnv(): JiraCredentials {
   }
 
   return { baseUrl, email, apiToken };
-}
+};
 
-function createClient(credentials: JiraCredentials): Version3Client {
-  return new Version3Client({
+const createClient = (credentials: JiraCredentials): Version3Client => new Version3Client({
     host: credentials.baseUrl,
     authentication: {
       basic: {
@@ -29,12 +28,11 @@ function createClient(credentials: JiraCredentials): Version3Client {
       },
     },
   });
-}
 
-export async function testJiraConnection(credentials?: JiraCredentials): Promise<void> {
+export const testJiraConnection = async (credentials?: JiraCredentials): Promise<void> => {
   const client = createClient(credentials ?? getCredentialsFromEnv());
   await client.myself.getCurrentUser();
-}
+};
 
 export interface JiraIssue {
   key: string;
@@ -43,7 +41,7 @@ export interface JiraIssue {
   type: string;
 }
 
-export async function fetchIssues(jql: string, credentials?: JiraCredentials): Promise<JiraIssue[]> {
+export const fetchIssues = async (jql: string, credentials?: JiraCredentials): Promise<JiraIssue[]> => {
   const client = createClient(credentials ?? getCredentialsFromEnv());
   const response = await client.issueSearch.searchForIssuesUsingJqlEnhancedSearch({
     jql,
@@ -57,9 +55,9 @@ export async function fetchIssues(jql: string, credentials?: JiraCredentials): P
     status: issue.fields.status.name ?? '',
     type: issue.fields.issuetype?.name ?? '',
   }));
-}
+};
 
-export async function fetchIssue(issueKey: string, credentials?: JiraCredentials): Promise<JiraIssue> {
+export const fetchIssue = async (issueKey: string, credentials?: JiraCredentials): Promise<JiraIssue> => {
   const client = createClient(credentials ?? getCredentialsFromEnv());
   const issue = await client.issues.getIssue({
     issueIdOrKey: issueKey,
@@ -72,13 +70,9 @@ export async function fetchIssue(issueKey: string, credentials?: JiraCredentials
     status: issue.fields.status.name ?? '',
     type: issue.fields.issuetype?.name ?? '',
   };
-}
+};
 
-export async function transitionIssue(
-  issueKey: string,
-  transitionName: string,
-  credentials?: JiraCredentials,
-): Promise<void> {
+export const transitionIssue = async (issueKey: string, transitionName: string, credentials?: JiraCredentials): Promise<void> => {
   const client = createClient(credentials ?? getCredentialsFromEnv());
 
   const transitions = await client.issues.getTransitions({
@@ -95,4 +89,4 @@ export async function transitionIssue(
     issueIdOrKey: issueKey,
     transition: { id: transition.id },
   });
-}
+};

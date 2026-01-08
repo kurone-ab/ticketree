@@ -9,7 +9,7 @@ const TICKETREE_DIR = '.ticketree';
 const CONFIG_FILE = '.ticketreerc';
 const GIT_EXCLUDE_FILE = '.git/info/exclude';
 
-export async function initCommand(): Promise<void> {
+export const initCommand = async (): Promise<void> => {
   console.log(chalk.blue('Initializing Ticketree...'));
 
   if (existsSync(CONFIG_FILE)) {
@@ -76,4 +76,4 @@ export GITHUB_TOKEN="ghp_xxx"
   }
 
   console.log(chalk.green('\nTicketree initialized successfully!'));
-}
+};

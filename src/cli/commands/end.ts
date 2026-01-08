@@ -6,7 +6,7 @@ interface EndOptions {
   base?: string;
 }
 
-export function endCommand(ticket: string | undefined, options: EndOptions): void {
+export const endCommand = (ticket: string | undefined, options: EndOptions): void => {
   console.log(chalk.blue('Ending ticket work...'));
 
   if (ticket) {
@@ -24,4 +24,4 @@ export function endCommand(ticket: string | undefined, options: EndOptions): voi
   }
 
   console.log(chalk.yellow('Not implemented yet'));
-}
+};
