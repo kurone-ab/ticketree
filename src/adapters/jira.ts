@@ -53,9 +53,9 @@ export async function fetchIssues(credentials: JiraCredentials, jql: string): Pr
 
   return (response.issues ?? []).map((issue) => ({
     key: issue.key,
-    summary: (issue.fields.summary as string | undefined) ?? '',
-    status: (issue.fields.status as { name?: string } | undefined)?.name ?? '',
-    type: (issue.fields.issuetype as { name?: string } | undefined)?.name ?? '',
+    summary: issue.fields.summary,
+    status: issue.fields.status.name ?? '',
+    type: issue.fields.issuetype?.name ?? '',
   }));
 }
 
@@ -68,9 +68,9 @@ export async function fetchIssue(credentials: JiraCredentials, issueKey: string)
 
   return {
     key: issue.key,
-    summary: (issue.fields.summary as string | undefined) ?? '',
-    status: (issue.fields.status as { name?: string } | undefined)?.name ?? '',
-    type: (issue.fields.issuetype as { name?: string } | undefined)?.name ?? '',
+    summary: issue.fields.summary,
+    status: issue.fields.status.name ?? '',
+    type: issue.fields.issuetype?.name ?? '',
   };
 }
 
