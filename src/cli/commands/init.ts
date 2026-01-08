@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import chalk from 'chalk';
 import { stringify } from 'yaml';
 import { DEFAULT_CONFIG } from '../../config/types.js';
-import { getJiraCredentials, testJiraConnection } from '../../adapters/jira.js';
+import { testJiraConnection } from '../../adapters/jira.js';
 
 const TICKETREE_DIR = '.ticketree';
 const CONFIG_FILE = '.ticketreerc';
@@ -53,8 +53,7 @@ export async function initCommand(): Promise<void> {
   console.log(chalk.blue('\nTesting Jira connection...'));
 
   try {
-    const credentials = getJiraCredentials();
-    await testJiraConnection(credentials);
+    await testJiraConnection();
     console.log(chalk.green('Jira connection successful!'));
   } catch (error) {
     if (error instanceof Error) {
