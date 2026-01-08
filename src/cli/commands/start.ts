@@ -4,7 +4,7 @@ import { loadConfig } from '@/config/loader.js';
 import { openEditor } from '@/core/editor.js';
 import { openTerminal } from '@/core/terminal.js';
 import { parseTicketInput, selectTicketInteractively } from '@/core/ticket-parser.js';
-import { createWorktree, getWorktreePath, worktreeExists } from '@/core/worktree.js';
+import { createSymlinks, createWorktree, getWorktreePath, worktreeExists } from '@/core/worktree.js';
 import { jiraConfigMissingError } from '@/utils/errors.js';
 
 export const startCommand = async (ticketInput?: string): Promise<void> => {
@@ -40,6 +40,14 @@ export const startCommand = async (ticketInput?: string): Promise<void> => {
       branchPrefix: config.git.branchPrefix,
     });
     console.log(chalk.green(`Created worktree at ${result.path} (branch: ${result.branch})`));
+
+    if (config.postCreate.symlinks.length > 0) {
+      console.log(chalk.blue('Creating symlinks...'));
+      createSymlinks({
+        worktreePath: result.path,
+        symlinks: config.postCreate.symlinks,
+      });
+    }
 
     if (config.issueTransition.onStart) {
       console.log(chalk.blue(`Transitioning issue to "${config.issueTransition.onStart}"...`));

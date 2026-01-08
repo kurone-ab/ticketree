@@ -1,5 +1,8 @@
-import { existsSync, readdirSync } from 'node:fs';
+import { existsSync, readdirSync, symlinkSync } from 'node:fs';
+import { resolve } from 'node:path';
+import chalk from 'chalk';
 import { simpleGit } from 'simple-git';
+import type { SymlinkConfig } from '@/config/types.js';
 
 const git = simpleGit();
 
@@ -120,4 +123,31 @@ export const listWorktrees = async (): Promise<WorktreeInfo[]> => {
 
     return { ticketKey, path, branch };
   });
+};
+
+export interface CreateSymlinksOptions {
+  worktreePath: string;
+  symlinks: SymlinkConfig[];
+}
+
+export const createSymlinks = (options: CreateSymlinksOptions): void => {
+  const { worktreePath, symlinks } = options;
+
+  for (const symlink of symlinks) {
+    const sourcePath = resolve(process.cwd(), symlink.source);
+    const targetPath = resolve(worktreePath, symlink.target);
+
+    if (!existsSync(sourcePath)) {
+      console.log(chalk.yellow(`Symlink source does not exist, skipping: ${symlink.source}`));
+      continue;
+    }
+
+    if (existsSync(targetPath)) {
+      console.log(chalk.gray(`Symlink already exists, skipping: ${symlink.target}`));
+      continue;
+    }
+
+    symlinkSync(sourcePath, targetPath);
+    console.log(chalk.green(`Created symlink: ${symlink.target} -> ${symlink.source}`));
+  }
 };
