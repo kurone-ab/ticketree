@@ -28,6 +28,7 @@ program
   .option('--pr', 'Create a pull request')
   .option('--no-draft', 'Create PR as ready for review (not draft)')
   .option('--base <branch>', 'Base branch for PR')
+  .option('--keep', 'Keep worktree and branch after ending')
   .action(endCommand);
 
 program.parse();

@@ -56,6 +56,41 @@ export const createWorktree = async (options: CreateWorktreeOptions): Promise<Wo
   };
 };
 
+export const getCurrentTicketKey = (): string | null => {
+  const cwd = process.cwd();
+  const ticketreeDir = '/.ticketree/';
+
+  const ticketreeIndex = cwd.indexOf(ticketreeDir);
+  if (ticketreeIndex === -1) return null;
+
+  const afterTicketree = cwd.slice(ticketreeIndex + ticketreeDir.length);
+  const ticketKey = afterTicketree.split('/')[0];
+
+  return ticketKey ?? null;
+};
+
+export const pushBranch = async (ticketKey: string): Promise<void> => {
+  const worktreePath = getWorktreePath(ticketKey);
+  const worktreeGit = simpleGit(worktreePath);
+  await worktreeGit.push(['--set-upstream', 'origin', 'HEAD']);
+};
+
+export const deleteWorktree = async (ticketKey: string): Promise<void> => {
+  const worktreePath = getWorktreePath(ticketKey);
+  await git.raw(['worktree', 'remove', worktreePath]);
+};
+
+export const deleteBranch = async (branchName: string): Promise<void> => {
+  await git.branch(['-d', branchName]);
+};
+
+export const getWorktreeBranch = async (ticketKey: string): Promise<string | null> => {
+  const worktreePath = getWorktreePath(ticketKey);
+  const worktreeGit = simpleGit(worktreePath);
+  const branch = await worktreeGit.revparse(['--abbrev-ref', 'HEAD']);
+  return branch.trim() || null;
+};
+
 export const listWorktrees = async (): Promise<WorktreeInfo[]> => {
   if (!existsSync(TICKETREE_DIR)) {
     return [];

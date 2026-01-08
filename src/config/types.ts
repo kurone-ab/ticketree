@@ -8,9 +8,14 @@ export interface IssueTrackerConfig {
   jira?: JiraConfig;
 }
 
+export interface GitHubConfig {
+  prBodyTemplate?: string;
+}
+
 export interface GitConfig {
   baseBranch: string;
   branchPrefix: string;
+  github?: GitHubConfig;
 }
 
 export interface SymlinkConfig {
@@ -72,6 +77,9 @@ export const DEFAULT_CONFIG: TicketreeConfig = {
   git: {
     baseBranch: 'main',
     branchPrefix: 'feature/',
+    github: {
+      prBodyTemplate: '## Related Issue\n{issueLink}',
+    },
   },
   postCreate: {
     symlinks: [],
