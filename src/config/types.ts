@@ -1,6 +1,16 @@
-export interface JiraConfig {
-  project: string;
+export interface JiraTransitionConfig {
+  onStart?: string | null;
+  onEnd?: string | null;
+}
+
+export interface JiraProjectConfig {
   jql: string;
+  transition?: JiraTransitionConfig;
+}
+
+export interface JiraConfig {
+  defaultProject?: string;
+  projects: Record<string, JiraProjectConfig>;
 }
 
 export interface IssueTrackerConfig {
@@ -39,19 +49,35 @@ export interface TerminalConfig {
   preset: 'ghostty' | 'iterm' | 'terminal' | 'warp' | 'kitty' | 'alacritty';
 }
 
-export interface IssueTransitionConfig {
-  onStart: string | null;
-  onEnd: string | null;
-}
-
 export interface TicketreeConfig {
   issueTracker: IssueTrackerConfig;
   git: GitConfig;
   postCreate: PostCreateConfig;
   editor: EditorConfig;
   terminal: TerminalConfig;
-  issueTransition: IssueTransitionConfig;
 }
+
+// ===== Legacy Types (for migration) =====
+
+export interface LegacyJiraConfig {
+  project: string;
+  jql: string;
+}
+
+export interface LegacyIssueTransitionConfig {
+  onStart: string | null;
+  onEnd: string | null;
+}
+
+export interface LegacyIssueTrackerConfig {
+  type: 'jira';
+  jira?: LegacyJiraConfig;
+}
+
+export type LegacyTicketreeConfig = Omit<TicketreeConfig, 'issueTracker'> & {
+  issueTracker: LegacyIssueTrackerConfig;
+  issueTransition?: LegacyIssueTransitionConfig;
+};
 
 export interface JiraCredentials {
   baseUrl: string;
@@ -72,8 +98,12 @@ export const DEFAULT_CONFIG: TicketreeConfig = {
   issueTracker: {
     type: 'jira',
     jira: {
-      project: 'PROJ',
-      jql: 'assignee = currentUser() AND resolution = Unresolved',
+      defaultProject: 'PROJ',
+      projects: {
+        PROJ: {
+          jql: 'assignee = currentUser() AND resolution = Unresolved',
+        },
+      },
     },
   },
   git: {
@@ -93,9 +123,5 @@ export const DEFAULT_CONFIG: TicketreeConfig = {
   terminal: {
     enabled: true,
     preset: 'ghostty',
-  },
-  issueTransition: {
-    onStart: null,
-    onEnd: null,
   },
 };

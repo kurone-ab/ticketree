@@ -33,3 +33,9 @@ export const invalidTicketFormatError = (input: string) =>
 
 export const noIssuesFoundError = () =>
   new UserError('No issues found matching the configured JQL query', 'Check your JQL configuration in .ticketreerc');
+
+export const projectConfigNotFoundError = (projectKey: string) =>
+  new UserError(
+    `No configuration found for project: ${projectKey}`,
+    `Add the project to issueTracker.jira.projects in .ticketreerc, or set defaultProject.`,
+  );

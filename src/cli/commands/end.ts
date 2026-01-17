@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { createPullRequest, getRepoFromRemote } from '@/adapters/github.js';
 import { fetchIssue, transitionIssue, type JiraIssue } from '@/adapters/jira.js';
-import { loadConfig } from '@/config/loader.js';
+import { getProjectConfig, loadConfig } from '@/config/loader.js';
 import { selectTicketInteractively } from '@/core/ticket-parser.js';
 import {
   deleteBranch,
@@ -124,9 +124,10 @@ export const endCommand = async (ticketInput: string | undefined, options: EndOp
     console.log(chalk.green(`Pull request created: ${pr.url}`));
   }
 
-  if (config.issueTransition.onEnd) {
-    console.log(chalk.blue(`Transitioning issue to "${config.issueTransition.onEnd}"...`));
-    await transitionIssue(ticketKey, config.issueTransition.onEnd);
+  const projectConfig = getProjectConfig(jiraConfig, ticketKey);
+  if (projectConfig.transition?.onEnd) {
+    console.log(chalk.blue(`Transitioning issue to "${projectConfig.transition.onEnd}"...`));
+    await transitionIssue(ticketKey, projectConfig.transition.onEnd);
     console.log(chalk.green('Issue transitioned successfully'));
   }
 

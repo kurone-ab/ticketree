@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import { fetchIssue, fetchIssues, transitionIssue, type JiraIssue } from '@/adapters/jira.js';
-import { loadConfig } from '@/config/loader.js';
+import { buildCombinedJql, getProjectConfig, loadConfig } from '@/config/loader.js';
 import { openEditor } from '@/core/editor.js';
 import { openTerminal } from '@/core/terminal.js';
 import { parseTicketInput, selectTicketInteractively } from '@/core/ticket-parser.js';
@@ -18,12 +18,13 @@ export const startCommand = async (ticketInput?: string): Promise<void> => {
   let ticket: JiraIssue;
 
   if (ticketInput) {
-    const parsed = parseTicketInput(ticketInput, jiraConfig.project);
+    const defaultProject = jiraConfig.defaultProject ?? Object.keys(jiraConfig.projects)[0] ?? 'PROJ';
+    const parsed = parseTicketInput(ticketInput, defaultProject);
     console.log(chalk.blue(`Fetching ticket ${parsed.key}...`));
     ticket = await fetchIssue(parsed.key);
   } else {
     console.log(chalk.blue('Fetching issues...'));
-    const jql = `project = ${jiraConfig.project} AND (${jiraConfig.jql})`;
+    const jql = buildCombinedJql(jiraConfig);
     const issues = await fetchIssues(jql);
     ticket = await selectTicketInteractively(issues);
   }
@@ -49,9 +50,10 @@ export const startCommand = async (ticketInput?: string): Promise<void> => {
       });
     }
 
-    if (config.issueTransition.onStart) {
-      console.log(chalk.blue(`Transitioning issue to "${config.issueTransition.onStart}"...`));
-      await transitionIssue(ticket.key, config.issueTransition.onStart);
+    const projectConfig = getProjectConfig(jiraConfig, ticket.key);
+    if (projectConfig.transition?.onStart) {
+      console.log(chalk.blue(`Transitioning issue to "${projectConfig.transition.onStart}"...`));
+      await transitionIssue(ticket.key, projectConfig.transition.onStart);
       console.log(chalk.green('Issue transitioned successfully'));
     }
   }

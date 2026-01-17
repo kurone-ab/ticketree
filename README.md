@@ -135,8 +135,19 @@ Ticketree uses `.ticketreerc` (YAML format) for project configuration.
 issueTracker:
   type: jira
   jira:
-    project: PROJ
-    jql: 'assignee = currentUser() AND resolution = Unresolved'
+    defaultProject: PROJ
+    projects:
+      PROJ:
+        jql: 'assignee = currentUser() AND resolution = Unresolved'
+        transition:
+          onStart: 'In Progress'
+          onEnd: null
+      # Multiple projects with different workflows
+      PLATFORM:
+        jql: 'assignee = currentUser() AND sprint in openSprints()'
+        transition:
+          onStart: 'In Development'
+          onEnd: 'In Review'
 
 git:
   baseBranch: main
@@ -159,22 +170,27 @@ editor:
 terminal:
   enabled: true
   preset: ghostty
-
-issueTransition:
-  onStart: 'In Progress'
-  onEnd: null
 ```
 
 ### Configuration Reference
 
-| Section           | Description                          |
-| ----------------- | ------------------------------------ |
-| `issueTracker`    | Jira project and JQL filter settings |
-| `git`             | Branch naming and PR template        |
-| `postCreate`      | Symlinks to create in new worktrees  |
-| `editor`          | Editor launch settings               |
-| `terminal`        | Terminal launch settings             |
-| `issueTransition` | Jira status transition on start/end  |
+| Section        | Description                           |
+| -------------- | ------------------------------------- |
+| `issueTracker` | Jira projects and JQL filter settings |
+| `git`          | Branch naming and PR template         |
+| `postCreate`   | Symlinks to create in new worktrees   |
+| `editor`       | Editor launch settings                |
+| `terminal`     | Terminal launch settings              |
+
+### Jira Configuration
+
+| Option                           | Description                                  |
+| -------------------------------- | -------------------------------------------- |
+| `jira.defaultProject`            | Default project for ticket number-only input |
+| `jira.projects.<KEY>.jql`        | JQL filter for fetching issues               |
+| `jira.projects.<KEY>.transition` | Status transitions for this project          |
+| `transition.onStart`             | Status to transition when starting work      |
+| `transition.onEnd`               | Status to transition when ending work        |
 
 ### PR Body Template Variables
 
@@ -213,6 +229,41 @@ Using [direnv](https://direnv.net/) is recommended for managing environment vari
 | Kitty        | Not yet   |
 | Alacritty    | Not yet   |
 | Terminal.app | Not yet   |
+
+## Config Migration
+
+If you're using the legacy config format (v0.3 or earlier), update to the new structure:
+
+### Before (Legacy)
+
+```yaml
+issueTracker:
+  type: jira
+  jira:
+    project: PROJ
+    jql: 'assignee = currentUser() AND resolution = Unresolved'
+
+issueTransition:
+  onStart: 'In Progress'
+  onEnd: null
+```
+
+### After (Current)
+
+```yaml
+issueTracker:
+  type: jira
+  jira:
+    defaultProject: PROJ
+    projects:
+      PROJ:
+        jql: 'assignee = currentUser() AND resolution = Unresolved'
+        transition:
+          onStart: 'In Progress'
+          onEnd: null
+```
+
+The legacy format is still supported with automatic migration, but you'll see a warning message.
 
 ## License
 

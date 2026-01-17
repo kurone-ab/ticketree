@@ -135,8 +135,19 @@ flowchart LR
 issueTracker:
   type: jira
   jira:
-    project: PROJ
-    jql: 'assignee = currentUser() AND resolution = Unresolved'
+    defaultProject: PROJ
+    projects:
+      PROJ:
+        jql: 'assignee = currentUser() AND resolution = Unresolved'
+        transition:
+          onStart: 'In Progress'
+          onEnd: null
+      # 워크플로우가 다른 프로젝트 추가 가능
+      PLATFORM:
+        jql: 'assignee = currentUser() AND sprint in openSprints()'
+        transition:
+          onStart: 'In Development'
+          onEnd: 'In Review'
 
 git:
   baseBranch: main
@@ -159,22 +170,27 @@ editor:
 terminal:
   enabled: true
   preset: ghostty
-
-issueTransition:
-  onStart: 'In Progress'
-  onEnd: null
 ```
 
 ### 설정 레퍼런스
 
-| 섹션              | 설명                           |
-| ----------------- | ------------------------------ |
-| `issueTracker`    | Jira 프로젝트 및 JQL 필터 설정 |
-| `git`             | 브랜치 네이밍 및 PR 템플릿     |
-| `postCreate`      | 워크트리에 생성할 심볼릭 링크  |
-| `editor`          | 에디터 실행 설정               |
-| `terminal`        | 터미널 실행 설정               |
-| `issueTransition` | 시작/종료 시 Jira 상태 전이    |
+| 섹션           | 설명                           |
+| -------------- | ------------------------------ |
+| `issueTracker` | Jira 프로젝트 및 JQL 필터 설정 |
+| `git`          | 브랜치 네이밍 및 PR 템플릿     |
+| `postCreate`   | 워크트리에 생성할 심볼릭 링크  |
+| `editor`       | 에디터 실행 설정               |
+| `terminal`     | 터미널 실행 설정               |
+
+### Jira 설정
+
+| 옵션                             | 설명                                     |
+| -------------------------------- | ---------------------------------------- |
+| `jira.defaultProject`            | 티켓 번호만 입력 시 사용할 기본 프로젝트 |
+| `jira.projects.<KEY>.jql`        | 이슈 조회용 JQL 필터                     |
+| `jira.projects.<KEY>.transition` | 해당 프로젝트의 상태 전이 설정           |
+| `transition.onStart`             | 작업 시작 시 전이할 상태                 |
+| `transition.onEnd`               | 작업 종료 시 전이할 상태                 |
 
 ### PR 본문 템플릿 변수
 
@@ -213,6 +229,41 @@ issueTransition:
 | Kitty        | 미지원 |
 | Alacritty    | 미지원 |
 | Terminal.app | 미지원 |
+
+## 설정 마이그레이션
+
+기존 설정 형식(v0.3 이하)을 사용 중이라면 새 구조로 업데이트하세요:
+
+### Before (구버전)
+
+```yaml
+issueTracker:
+  type: jira
+  jira:
+    project: PROJ
+    jql: 'assignee = currentUser() AND resolution = Unresolved'
+
+issueTransition:
+  onStart: 'In Progress'
+  onEnd: null
+```
+
+### After (현재)
+
+```yaml
+issueTracker:
+  type: jira
+  jira:
+    defaultProject: PROJ
+    projects:
+      PROJ:
+        jql: 'assignee = currentUser() AND resolution = Unresolved'
+        transition:
+          onStart: 'In Progress'
+          onEnd: null
+```
+
+구버전 형식도 자동 마이그레이션으로 지원되지만, 경고 메시지가 표시됩니다.
 
 ## 라이선스
 
